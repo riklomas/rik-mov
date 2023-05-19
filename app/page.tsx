@@ -1,95 +1,98 @@
 import Image from 'next/image'
 import styles from './page.module.css'
 
-export default function Home() {
+import { Alchemy, Network, type Nft } from 'alchemy-sdk'
+
+const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!
+
+const alchemy = new Alchemy({
+  apiKey: process.env.ALCHEMY_KEY,
+  network: process.env.ALCHEMY_CHAIN! as Network
+})
+
+export const Display = async ({ item }: { item: Nft }) => {
+  let d = <></>
+  let owner = null
+  let shortOwner = null
+  let href = null
+  let ens = null
+  let mediaType = null
+  let res = [0, 0]
+
+  const { owners } = await alchemy.nft.getOwnersForNft(
+    CONTRACT_ADDRESS,
+    item.tokenId
+  )
+
+  if (owners.length > 0) {
+    owner = owners[0]
+    shortOwner =
+      owner.substring(0, 6) + '...' + owner.substring(owner.length - 4)
+    ens = await alchemy.core.lookupAddress(owners[0])
+    href = `https://rainbow.me/${owner}`
+  }
+
+  if (item.rawMetadata?.animation) {
+    d = (
+      <video
+        src={item.rawMetadata.animation}
+        autoPlay
+        muted
+        loop
+        playsInline
+      ></video>
+    )
+    mediaType = 'video'
+    res = [
+      item.rawMetadata.animation_details.width,
+      item.rawMetadata.animation_details.height
+    ]
+  } else if (item.rawMetadata?.image) {
+    d = <img src={item.rawMetadata.image} />
+    mediaType = 'image'
+    res = [
+      item.rawMetadata.image_details.width,
+      item.rawMetadata.image_details.height
+    ]
+  }
+
+  return (
+    <figure className={styles.card}>
+      <figcaption>
+        <h2>{item.title}</h2>
+
+        <div>
+          <p>
+            {res[0]}&times;{res[1]}px {mediaType}
+          </p>
+          <p>
+            Owner:{' '}
+            {href ? (
+              <a href={href}>{ens ?? shortOwner}</a>
+            ) : (
+              ens ?? shortOwner ?? 'no one'
+            )}
+          </p>
+        </div>
+      </figcaption>
+      <div className="media">{d}</div>
+    </figure>
+  )
+}
+
+export default async function Home() {
+  const { nfts } = await alchemy.nft.getNftsForContract(CONTRACT_ADDRESS)
+
+  const oNfts = nfts.sort((a, b) =>
+    b.timeLastUpdated.localeCompare(a.timeLastUpdated)
+  )
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      {oNfts.map((o) => {
+        /* @ts-expect-error Server Component */
+        return <Display key={o.tokenId} item={o} />
+      })}
     </main>
   )
 }
