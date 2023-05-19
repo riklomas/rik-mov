@@ -49,6 +49,8 @@
 .card figcaption div {
   display: grid;
   gap: 4px;
+  aspect-ratio: unset;
+  margin: 0;
 }
 
 .card a {
