@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     'An on-chain gallery, featuring generative art based around just one texture',
   authors: { name: 'Rik Lomas', url: 'https://rik.mov' },
   themeColor: '#222222',
+  icons: {
+    icon: './favicon.png'
+  },
   openGraph: {
     title: 'rik.mov',
     description:

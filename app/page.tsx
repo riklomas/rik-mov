@@ -48,7 +48,7 @@ const Display = async ({ item }: { item: Nft }) => {
       item.rawMetadata.animation_details.height
     ]
   } else if (item.rawMetadata?.image) {
-    d = <img src={item.rawMetadata.image} />
+    d = <Image src={item.rawMetadata.image} alt={item.title} fill={true} />
     mediaType = 'image'
     res = [
       item.rawMetadata.image_details.width,
