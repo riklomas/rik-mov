@@ -58,6 +58,8 @@ const Display = async ({ item }: { item: Nft }) => {
 
   return (
     <figure className={styles.card}>
+      <div className="media">{d}</div>
+
       <figcaption>
         <h2>{item.title}</h2>
 
@@ -75,7 +77,6 @@ const Display = async ({ item }: { item: Nft }) => {
           </p>
         </div>
       </figcaption>
-      <div className="media">{d}</div>
     </figure>
   )
 }

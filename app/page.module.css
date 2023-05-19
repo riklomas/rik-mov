@@ -1,5 +1,5 @@
 .card {
-  height: max(600px, 100vh);
+  height: 100vmin;
   padding: 64px;
   position: relative;
   background-color: var(--background);
@@ -14,8 +14,8 @@
   bottom: 100%;
   left: 0;
   width: 100%;
-  height: 64px;
-  background-image: linear-gradient(#22222200, #222222ff);
+  height: 32px;
+  background-image: linear-gradient(#22222200, #22222233 50%, #222222ff);
 }
 
 .card div {
@@ -49,4 +49,22 @@
 
 .card a {
   color: inherit;
+}
+
+@media (max-width: 800px) {
+  .card {
+    position: relative;
+    padding: 32px;
+    height: auto;
+  }
+
+  .card figcaption {
+    margin: 24px 0 0 0;
+    position: static;
+    text-align: left;
+  }
+
+  .card:before {
+    content: none;
+  }
 }

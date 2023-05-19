@@ -22,8 +22,9 @@ body {
 
 header {
   position: fixed;
-  top: 32px;
-  left: 32px;
+  top: 0;
+  left: 0;
+  padding: 32px;
   z-index: 1;
   max-width: 20em;
 
@@ -45,4 +46,12 @@ header,
 h2 {
   color: var(--text);
   mix-blend-mode: difference;
+}
+
+@media (max-width: 800px) {
+  header {
+    position: relative;
+    padding: 32px;
+    max-width: 30em;
+  }
 }
