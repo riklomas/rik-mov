@@ -10,7 +10,7 @@ const alchemy = new Alchemy({
   network: process.env.ALCHEMY_CHAIN! as Network
 })
 
-export const Display = async ({ item }: { item: Nft }) => {
+const Display = async ({ item }: { item: Nft }) => {
   let d = <></>
   let owner = null
   let shortOwner = null
