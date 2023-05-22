@@ -7,4 +7,9 @@ export const alchemy = new Alchemy({
   network: process.env.ALCHEMY_CHAIN! as Network
 })
 
+export const mainnetAlchemy = new Alchemy({
+  apiKey: process.env.ALCHEMY_KEY,
+  network: Network.ETH_MAINNET
+})
+
 export { CONTRACT_ADDRESS, type Nft }

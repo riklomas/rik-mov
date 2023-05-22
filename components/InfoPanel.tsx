@@ -1,4 +1,9 @@
-import { alchemy, CONTRACT_ADDRESS, type Nft } from '@/lib/alchemy'
+import {
+  alchemy,
+  CONTRACT_ADDRESS,
+  mainnetAlchemy,
+  type Nft
+} from '@/lib/alchemy'
 
 export const InfoPanel = async ({ item }: { item: Nft }) => {
   let owner = null
@@ -17,7 +22,7 @@ export const InfoPanel = async ({ item }: { item: Nft }) => {
     owner = owners[0]
     shortOwner =
       owner.substring(0, 6) + '...' + owner.substring(owner.length - 4)
-    ens = await alchemy.core.lookupAddress(owners[0])
+    ens = await mainnetAlchemy.core.lookupAddress(owners[0])
     href = `https://rainbow.me/${owner}`
   }
 
