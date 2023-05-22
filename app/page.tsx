@@ -1,81 +1,26 @@
-import Image from 'next/image'
 import styles from './page.module.css'
+import { DisplayImage } from '../components/DisplayImage'
+import { DisplayVideo } from '../components/DisplayVideo'
+import { InfoPanel } from '../components/InfoPanel'
 
-import { Alchemy, Network, type Nft } from 'alchemy-sdk'
-
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS!
-
-const alchemy = new Alchemy({
-  apiKey: process.env.ALCHEMY_KEY,
-  network: process.env.ALCHEMY_CHAIN! as Network
-})
+import { alchemy, CONTRACT_ADDRESS, type Nft } from '@/lib/alchemy'
 
 const Display = async ({ item }: { item: Nft }) => {
   let d = <></>
-  let owner = null
-  let shortOwner = null
-  let href = null
-  let ens = null
-  let mediaType = null
-  let res = [0, 0]
-
-  const { owners } = await alchemy.nft.getOwnersForNft(
-    CONTRACT_ADDRESS,
-    item.tokenId
-  )
-
-  if (owners.length > 0) {
-    owner = owners[0]
-    shortOwner =
-      owner.substring(0, 6) + '...' + owner.substring(owner.length - 4)
-    ens = await alchemy.core.lookupAddress(owners[0])
-    href = `https://rainbow.me/${owner}`
-  }
 
   if (item.rawMetadata?.animation) {
-    d = (
-      <video
-        src={item.rawMetadata.animation}
-        autoPlay
-        muted
-        loop
-        playsInline
-      ></video>
-    )
-    mediaType = 'video'
-    res = [
-      item.rawMetadata.animation_details.width,
-      item.rawMetadata.animation_details.height
-    ]
+    d = <DisplayVideo item={item} />
   } else if (item.rawMetadata?.image) {
-    d = <Image src={item.rawMetadata.image} alt={item.title} fill={true} />
-    mediaType = 'image'
-    res = [
-      item.rawMetadata.image_details.width,
-      item.rawMetadata.image_details.height
-    ]
+    d = <DisplayImage item={item} />
   }
 
   return (
     <figure className={styles.card}>
-      <div className={styles.media}>{d}</div>
+      <div>{d}</div>
 
       <figcaption>
-        <h2>{item.title}</h2>
-
-        <div>
-          <p>
-            {res[0]}&times;{res[1]}px {mediaType}
-          </p>
-          <p>
-            Owner:{' '}
-            {href ? (
-              <a href={href}>{ens ?? shortOwner}</a>
-            ) : (
-              ens ?? shortOwner ?? 'no one'
-            )}
-          </p>
-        </div>
+        {/* @ts-expect-error Server Component */}
+        <InfoPanel item={item} />
       </figcaption>
     </figure>
   )
@@ -98,4 +43,4 @@ export default async function Home() {
   )
 }
 
-export const revalidate = 60 * 60
+export const revalidate = 60 * 5
