@@ -58,7 +58,7 @@ const Display = async ({ item }: { item: Nft }) => {
 
   return (
     <figure className={styles.card}>
-      <div className="media">{d}</div>
+      <div className={styles.media}>{d}</div>
 
       <figcaption>
         <h2>{item.title}</h2>
@@ -97,3 +97,5 @@ export default async function Home() {
     </main>
   )
 }
+
+export const revalidate = 60 * 60
